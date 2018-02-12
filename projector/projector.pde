@@ -1,8 +1,17 @@
+import com.google.gson.annotations.*;
+import com.google.gson.*;
+import com.google.gson.internal.*;
+import com.google.gson.internal.bind.*;
+import com.google.gson.internal.bind.util.*;
+import com.google.gson.reflect.*;
+import com.google.gson.stream.*;
+
 // Main application for producing visualizations
 import spout.*;
 import hypermedia.net.*;
 
 import java.util.*;
+import java.lang.*;
 
 public class Scene
 {
@@ -13,18 +22,24 @@ public class Scene
 public class Command
 {
   float value = 0;
+  String name;
 }
 
 // Create the scene state settings object.
 Scene s = new Scene();
 
-Deque<Float> cmds;
+Deque<Command> cmds;
 
 // Provide a spout object for sending/recieving.
 Spout spout;
 
 // UDP component
 UDP udp_client;
+
+// JSON parser
+Gson gson = new Gson();
+
+float r=255, g=255, b = 255;
 
 void settings()
 {
@@ -34,7 +49,7 @@ void settings()
 
 void setup()
 {
-  cmds = new ArrayDeque<Float>();
+  cmds = new ArrayDeque<Command>();
   // Initialize udp client.
   udp_client = new UDP(this, 8051);
 
@@ -52,7 +67,18 @@ void draw()
 {
   if (!cmds.isEmpty())
   {
-    background(cmds.pop()*255, 100, 100);
+    Command cmd = cmds.pop();
+    switch (cmd.name.toLowerCase())
+    {
+      case "slider1":
+        r = 255*cmd.value;
+        break;
+      case "slider2":
+        b = 255*cmd.value;
+        break;
+    }
+
+    background(r, g, b);
   }
 
   // Send the spout texture to memory
@@ -74,6 +100,9 @@ void receive(byte[] d, String ip, int port)
   }
   else
   {
-    cmds.push(json.getFloat("value"));
+    Command m = gson.fromJson(msg, Command.class);
+    println(m.value);
+    println(m.name);
+    cmds.push(m);
   }
 }
