@@ -24,17 +24,38 @@ public class ScatterPlot extends Visualization
     data = d;
   }
 
-  public void draw()
+  public void drawLine()
   {
     if (!drawn)
     {
       int max = findMax(data);
+      beginShape();
       for (int i = 0; i < data.length; i++)
       {
-        ellipse(i*(s.width)/data.length, s.height - (data[i]*(s.height))/(max), 4.0, 4.0);
+        vertex(map(i, 0, data.length, 20, s.width-20),
+                map(data[i], 0, max, 20, s.height-20));
       }
+      endShape();
     }
     drawn = true;
+  }
+
+  public void drawPoints()
+  {
+    if (drawn) return;
+
+    int max = findMax(data);
+    for (int i = 0; i < data.length; i++)
+    {
+      point(map(i, 0, data.length, 20, s.width-20),
+              map(data[i], 0, max, 20, s.height-20));
+    }
+
+  }
+
+  public void draw()
+  {
+    drawLine();
   }
 }
 

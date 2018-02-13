@@ -54,11 +54,12 @@ void setup()
   // Deque of commands in
   cmds = new ArrayDeque<Command>();
 
-  ArrayList<Float> d = noiseLine(0.0, .01, 40.0, s.width);
+  ArrayList<Float> d = noiseLine(0.0, .05, 1, s.width);
+  println(d);
   int[] e = new int[d.size()];
   for (int i = 0; i < d.size(); i++)
   {
-    e[i] = (int)(100 * d.get(i));
+    e[i] = int(s.height*d.get(i));
   }
 
   s.viz = new ScatterPlot(e);
@@ -77,7 +78,7 @@ void setup()
   String sender_name = "AR visualizations";
 
   // Set initial background color
-  background(255, 100, 200);
+  background(r, g, b);
 }
 
 void draw()
@@ -99,7 +100,9 @@ void draw()
     s.viz.drawn = false;
   }
 
-  s.viz.draw();
+  //((ScatterPlot) s.viz).drawLine();
+  //s.viz.drawn = false;
+  ((ScatterPlot) s.viz).drawPoints();
 
   // Send the spout texture to memory
   spout.sendTexture();

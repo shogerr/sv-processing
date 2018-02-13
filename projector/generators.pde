@@ -13,7 +13,7 @@ ArrayList<Float> noiseLine(float x, float xi, float n, int w)
   int i = 0;
   while (x<n)
   {
-    d.add(w*noise(x));
+    d.add(noise(x));
     x+=xi;
     i++;
   }
