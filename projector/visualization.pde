@@ -59,6 +59,24 @@ public class ScatterPlot extends Visualization
   }
 }
 
+void checkerBoard() {
+  for (int i = 0; i < s.width; i += 50)
+  {
+    for (int j = 0; j < s.height; j += 50)
+    {
+      if ((i+j)%20 == 0)
+      {
+        fill(150,0,0);
+      }
+      else
+      {
+        fill(100,0,0);
+      }
+      rect(i, j, 50, 50);
+    }
+  }
+}
+
 int findMax(int[] d)
 {
   int m = d[0];

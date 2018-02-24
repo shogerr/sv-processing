@@ -96,14 +96,13 @@ void draw()
         break;
     }
 
-    background(r, g, b);
     s.viz.drawn = false;
   }
 
   //((ScatterPlot) s.viz).drawLine();
   //s.viz.drawn = false;
-  ((ScatterPlot) s.viz).drawPoints();
-
+  //((ScatterPlot) s.viz).drawPoints();
+  checkerBoard();
   // Send the spout texture to memory
   spout.sendTexture();
 }
