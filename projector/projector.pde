@@ -26,10 +26,22 @@ public class Command
   String name;
 }
 
+public class VisualizationCommand
+{
+  int sensorID;
+  String startDate;
+  String endDate;
+}
+
+public class VisualizationData
+{
+  int[] values;
+}
+
 // Create the scene state settings object.
 Scene s = new Scene();
 
-Deque<Command> cmds;
+Deque<VisualizationData> cmds;
 
 // Provide a spout object for sending/recieving.
 Spout spout;
@@ -42,6 +54,8 @@ Gson gson = new Gson();
 
 float r=255, g=255, b = 255;
 
+int[] data;
+
 void settings()
 {
   // Ensure P3D is set
@@ -52,9 +66,10 @@ void setup()
 {
   // Setup our program
   // Deque of commands in
-  cmds = new ArrayDeque<Command>();
+  cmds = new ArrayDeque<VisualizationData>();
 
   ArrayList<Float> d = noiseLine(0.0, .05, 1, s.width);
+  
   println(d);
   int[] e = new int[d.size()];
   for (int i = 0; i < d.size(); i++)
@@ -85,24 +100,17 @@ void draw()
 {
   if (!cmds.isEmpty())
   {
-    Command cmd = cmds.pop();
-    switch (cmd.name.toLowerCase())
-    {
-      case "slider1":
-        r = 255*cmd.value;
-        break;
-      case "slider2":
-        b = 255*cmd.value;
-        break;
-    }
-
+    VisualizationData cmd = cmds.pop();
+    data = cmd.values;
+    s.viz.setData(data);
     s.viz.drawn = false;
+    println("Found data");
   }
 
   //((ScatterPlot) s.viz).drawLine();
   //s.viz.drawn = false;
-  //((ScatterPlot) s.viz).drawPoints();
-  checkerBoard();
+  ((ScatterPlot) s.viz).drawLine();
+
   // Send the spout texture to memory
   spout.sendTexture();
 }
@@ -119,9 +127,8 @@ void receive(byte[] d, String ip, int port)
   }
   else
   {
-    Command m = gson.fromJson(msg, Command.class);
-    println(m.value);
-    println(m.name);
+    VisualizationData m = gson.fromJson(msg, VisualizationData.class);
+    println(m.values);
     cmds.push(m);
   }
 }
