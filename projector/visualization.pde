@@ -19,57 +19,32 @@ public class Visualization
   }
 }
 
-public class ScatterPlot extends Visualization
+void lineGraph(int[] data)
 {
-  public ScatterPlot()
-  {
-  }
-  public ScatterPlot(int[] d)
-  {
-    data = d;
-  }
+  clear();
+  int max = findMax(data);
 
-  
-  public void drawLine()
+  stroke(color(255, 255, 255));
+  noFill();
+  beginShape();
+  for (int i = 0; i < data.length; i++)
   {
-    if (!drawn)
-    {
-      //clear();
-      int max = findMax(data);
-      
-      
-      color(255, 255, 255);
-      noFill();
-      beginShape();
-      for (int i = 0; i < data.length; i++)
-      {
-        vertex(map(i, 0, data.length, 20, s.width-20),
-                map(data[i], 0, max, 20, s.height-20));
-      }
-      endShape(CLOSE);
-    }
-    drawn = true;
+    vertex(map(i, 0, data.length, 20, s.width-20),
+            map(data[i], 0, max, 20, s.height-20));
   }
+  endShape();
+}
 
-  public void drawPoints()
+void scatterPlot(int[] data)
+{
+  clear();
+  println("drawing plot");
+  println(data);
+  int max = findMax(data);
+  for (int i = 0; i < data.length; i++)
   {
-    if (drawn) return;
-    clear();
-    println("drawing plot");
-    println(data);
-    int max = findMax(data);
-    for (int i = 0; i < data.length; i++)
-    {
-      ellipse(map(i, 0, data.length, 20, s.width-20),
-              map(data[i], 0, max, 20, s.height-20), 2, 2);
-    }
-    drawn = true;
-
-  }
-
-  public void draw()
-  {
-    drawLine();
+    ellipse(map(i, 0, data.length, 5, s.width-5),
+            map(data[i], 0, max, 5, s.height-5), 4, 4);
   }
 }
 
@@ -102,6 +77,18 @@ int findMax(int[] d)
     }
   }
   return m;
+}
+
+void barGraph(int[] v, float y, float f, float s)
+{
+  for (int i = 0; i < v.length; i++)
+  {
+    //println(v[i]);
+    colorMode(HSB,1.0);
+    fill(v[i], 1.0, 1.0);
+
+    rect(i*f, y, f, -v[i]*s);
+  }
 }
 /*
 void heatMap(float c) {  // Generate the heat map

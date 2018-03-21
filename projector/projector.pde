@@ -17,13 +17,14 @@ public class Scene
 {
   int width = 640;
   int height = 480;
+  boolean drawn = false;
+  Map<String, Command> vizMap;
   Visualization viz;
 }
 
-public class Command
+interface Command
 {
-  float value = 0;
-  String name;
+  void drawViz();
 }
 
 public class VisualizationCommand
@@ -35,6 +36,7 @@ public class VisualizationCommand
 
 public class VisualizationData
 {
+  String visualization;
   int[] values;
 }
 
@@ -56,6 +58,8 @@ float r=255, g=255, b = 255;
 
 int[] data;
 
+String selectedVisualization = "scatter";
+
 void settings()
 {
   // Ensure P3D is set
@@ -64,20 +68,34 @@ void settings()
 
 void setup()
 {
+  s.vizMap = new HashMap<String, Command>();
+
+  s.vizMap.put("line", new Command() {
+    public void drawViz() { lineGraph(data); };
+  });
+
+  s.vizMap.put("scatter", new Command() {
+    public void drawViz() { scatterPlot(data); };
+  });
+
+  s.vizMap.put("bargraph", new Command() {
+    public void drawViz() { barGraph(data, (float)s.height-(s.height/3), (float)s.width/data.length, (float)s.height/2); };
+  });
+
   // Setup our program
   // Deque of commands in
   cmds = new ArrayDeque<VisualizationData>();
 
   ArrayList<Float> d = noiseLine(0.0, .05, 1, s.width);
-  
-  println(d);
+
   int[] e = new int[d.size()];
   for (int i = 0; i < d.size(); i++)
   {
     e[i] = int(s.height*d.get(i));
   }
 
-  s.viz = new ScatterPlot(e);
+  data = e;
+  //s.viz = new ScatterPlot(e);
 
   //// Setup our network
   // Initialize udp client.
@@ -102,14 +120,17 @@ void draw()
   {
     VisualizationData cmd = cmds.pop();
     data = cmd.values;
-    s.viz.setData(data);
-    s.viz.drawn = false;
-    println("Found data");
+    selectedVisualization = cmd.visualization;
+    s.drawn = false;
   }
 
   //((ScatterPlot) s.viz).drawLine();
   //s.viz.drawn = false;
-  ((ScatterPlot) s.viz).drawLine();
+  if (!s.drawn)
+  {
+    s.vizMap.get(selectedVisualization).drawViz();
+    s.drawn = true;
+  }
 
   // Send the spout texture to memory
   spout.sendTexture();
@@ -128,6 +149,7 @@ void receive(byte[] d, String ip, int port)
   else
   {
     VisualizationData m = gson.fromJson(msg, VisualizationData.class);
+    println(m.visualization);
     println(m.values);
     cmds.push(m);
   }
