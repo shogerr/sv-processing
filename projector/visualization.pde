@@ -19,6 +19,8 @@ public class Visualization
   }
 }
 
+float[][] heat_array;
+
 void lineGraph(int[] data)
 {
   clear();
@@ -81,6 +83,7 @@ int findMax(int[] d)
 
 void barGraph(int[] v, float y, float f, float s)
 {
+  clear();
   for (int i = 0; i < v.length; i++)
   {
     //println(v[i]);
@@ -90,9 +93,61 @@ void barGraph(int[] v, float y, float f, float s)
     rect(i*f, y, f, -v[i]*s);
   }
 }
+
+void proportional(int[] data){
+  clear();
+  int sum = 0;
+  int avg = 0;
+  int total = 0;
+  for (int i = 0; i < data.length; i++){
+    sum += data[i];
+    total++;
+  }
+  avg = sum/total;
+  translate(500, height*0.35, -200);
+  sphere(avg);
+}
+
+void gradient(int[] data){
+  /*int sum = 0;
+  int avg = 0;
+  int total = 0;
+  for (int i = 0; i < data.length; i++){
+    sum += data[i];
+    total++;
+  }
+  avg = sum/total;
+  
+  clear();
+  noStroke();
+  ellipseMode(RADIUS);
+  frameRate(1);
+  colorMode(HSB, 360, 100, 100);
+
+  drawGradient(width/2, height/2, avg);
+  */
+}
+
+void drawGradient(float x, float y, int avg) {
+
+  
+  int radius = width/3;
+  float h = avg%360;
+  for (int r = radius; r > 0; --r) {
+    fill(h, 90, 90);
+    ellipse(x, y, r, r);
+    h = (h + 1) % 360;
+  }
+}
+
 /*
 void heatMap(float c) {  // Generate the heat map
-  float[][] heat_array;
+  for (int h = 0; h < height; h++) {
+    for (int w = 0; w < width; w++) {
+      // Range is 24.8 - 30.8
+      heat_array[w][h] = 24.8 + 6.0 * noise(h * 0.01, w * 0.02);
+    }
+  }
   pushStyle(); 
   // Set drawing mode to HSB instead of RGB
   colorMode(HSB, 1, 1, 1);

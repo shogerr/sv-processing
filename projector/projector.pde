@@ -58,7 +58,10 @@ float r=255, g=255, b = 255;
 
 int[] data;
 
-String selectedVisualization = "scatter";
+
+
+  
+String selectedVisualization = "line";
 
 void settings()
 {
@@ -80,6 +83,14 @@ void setup()
 
   s.vizMap.put("bargraph", new Command() {
     public void drawViz() { barGraph(data, (float)s.height-(s.height/3), (float)s.width/data.length, (float)s.height/2); };
+  });
+  
+  s.vizMap.put("gradient", new Command() {
+    public void drawViz() { gradient(data); };
+  });
+  
+  s.vizMap.put("proportional", new Command() {
+    public void drawViz() { proportional(data); };
   });
 
   // Setup our program
@@ -116,6 +127,7 @@ void setup()
 
 void draw()
 {
+  println(data);
   if (!cmds.isEmpty())
   {
     VisualizationData cmd = cmds.pop();
@@ -151,6 +163,7 @@ void receive(byte[] d, String ip, int port)
     VisualizationData m = gson.fromJson(msg, VisualizationData.class);
     println(m.visualization);
     println(m.values);
+    println(m);
     cmds.push(m);
   }
 }
